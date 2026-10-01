@@ -12,3 +12,4 @@ C:\Users\ronro\source\repos\FridgeTron\obj\Debug\net9.0\refint\FridgeTron.dll
 C:\Users\ronro\source\repos\FridgeTron\obj\Debug\net9.0\FridgeTron.pdb
 C:\Users\ronro\source\repos\FridgeTron\obj\Debug\net9.0\FridgeTron.genruntimeconfig.cache
 C:\Users\ronro\source\repos\FridgeTron\obj\Debug\net9.0\ref\FridgeTron.dll
+C:\Users\ronro\source\repos\FridgeTron\obj\Debug\net9.0\FridgeTron.sourcelink.json
