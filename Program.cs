@@ -9,13 +9,26 @@
             private Item[] arr;
             public Fridge(int maxItems, double currentTemp)
             {
+<<<<<<< HEAD
+=======
+                if(maxItems <= 0) throw new ArgumentException("maxItems must be greater than 0");
+>>>>>>> 2d325eb (fixes to stage 1)
                 this.maxItems = maxItems;
                 this.currentTemp = currentTemp;
                 this.arr = new Item[maxItems];
             }
             public bool AddNewItem(Item item)
             {
+<<<<<<< HEAD
                 if(this.CountItems()>= this.maxItems) return false;
+=======
+                if (item == null) return false;
+                if (this.CountItems()>= this.maxItems) return false;
+                for (int i = 0; i < this.arr.Length; i++)
+                {
+                    if (this.arr[i] != null && this.arr[i] == item) return false;
+                }
+>>>>>>> 2d325eb (fixes to stage 1)
                 for (int i = 0; i < this.arr.Length; i++)
                 {
                     if (this.arr[i] == null)
@@ -37,6 +50,7 @@
             }
             public bool RemoveItem(int index)
             {
+<<<<<<< HEAD
                 for (int i = 0; i < this.arr.Length; i++)
                 {
                     if (i == index)
@@ -67,14 +81,66 @@
                 for (int i = 0; i < this.arr.Length; i++)
                 {
                     if (this.arr[i] != null && this.arr[i].GetexDate().IsExpired(GetCurrDate()))
+=======
+                if(index < 0 || index >= this.arr.Length) return false;
+                if (this.arr[index] == null) return false;
+                arr[index] = null;
+                return true;
+            }
+            public Item[] ListAll()
+            {
+                return this.arr;
+            }
+            public Item[] Find(Func<Item,bool> condition)
+            {
+                Item[] foundItems = new Item[this.arr.Length];
+                int count = 0;
+                for (int i = 0; i < this.arr.Length; i++)
+                {
+                    if (this.arr[i] != null && condition(this.arr[i]))
+                    {
+                        foundItems[count] = this.arr[i];
+                        count++;
+                    }
+                }
+                return foundItems;
+            }
+            public void RemoveBy(Func<Item, bool> condition)
+            {
+                for (int i = 0; i < this.arr.Length; i++)
+                {
+                    if (this.arr[i] != null && condition(this.arr[i]))
+>>>>>>> 2d325eb (fixes to stage 1)
                         this.arr[i] = null;
                 }
             }
 
             public void SetmaxItems(int num)
             {
+<<<<<<< HEAD
                 this.maxItems = num;
             }
+=======
+                Item[] newarr = new Item[num];
+                if(num > this.maxItems)
+                {
+                    for (int i = 0; i < this.arr.Length; i++)
+                    {
+                        newarr[i] = this.arr[i];
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < num; i++)
+                    {
+                        newarr[i] = this.arr[i];
+                    }
+                }
+                this.maxItems = num;
+                this.arr = newarr;
+            }
+
+>>>>>>> 2d325eb (fixes to stage 1)
             public void SetcurrentTemp(double num)
             {
                 this.currentTemp = num;
@@ -138,9 +204,19 @@
 
             public Date(int minutes, int hours, int day, int month, int year)
             {
+<<<<<<< HEAD
                 this.minutes = minutes;
                 this.hours = hours;
                 this.day = day;
+=======
+                if (minutes < 0 || minutes > 59) throw new ArgumentException("Minutes must be between 0 and 59");
+                this.minutes = minutes;
+                if (hours < 0 || hours > 23) throw new ArgumentException("Hours must be between 0 and 23");
+                this.hours = hours;
+                if (day < 1 || day > 31) throw new ArgumentException("Day must be between 1 and 31");
+                this.day = day;
+                if (month < 1 || month > 12) throw new ArgumentException("Month must be between 1 and 12");
+>>>>>>> 2d325eb (fixes to stage 1)
                 this.month = month;
                 this.year = year;
             }
@@ -178,6 +254,16 @@
             DateTime now = DateTime.Now;
             return new Date(now.Minute, now.Hour, now.Day, now.Month, now.Year);
         }
+<<<<<<< HEAD
+=======
+        public static void PrintItems(Item[] items)
+        {
+            for(int i = 0; i < items.Length; i++)
+            {
+                if (items[i] != null) Console.WriteLine(items[i].ToString());
+            }
+        }
+>>>>>>> 2d325eb (fixes to stage 1)
         public static void Main(string[] args)
         {
             Item banana = new Item("Banana", "Fruits", new Date(12, 12, 12, 12, 2012));
@@ -188,6 +274,7 @@
             fridge.AddNewItem(strawberry);
             fridge.AddNewItem(butter);
             Console.WriteLine("All:");
+<<<<<<< HEAD
             fridge.ListAll();
             Console.WriteLine("Bad:");
             fridge.ListBad();
@@ -197,6 +284,29 @@
             fridge.RemoveBad();
             Console.WriteLine("All:");
             fridge.ListAll();
+=======
+            PrintItems(fridge.ListAll());
+            Console.WriteLine("Bad:");
+            Item[] badItems = fridge.Find(item => item.GetexDate().IsExpired(GetCurrDate()));
+            PrintItems(badItems);
+            Console.WriteLine("Adding another banana will print false:");
+            Console.WriteLine(fridge.AddNewItem(banana));
+            Console.WriteLine("Removing Bad...");
+            fridge.RemoveBy(item => item.GetexDate().IsExpired(GetCurrDate()));
+            Console.WriteLine("All:");
+            PrintItems(fridge.ListAll());
+            Console.WriteLine("Extending fridge from 3->4...");
+            fridge.SetmaxItems(4);
+            PrintItems(fridge.ListAll());
+            Console.WriteLine("Adding another banana will print true:");
+            Console.WriteLine(fridge.AddNewItem(banana));
+            Item pear = new Item("Pear", "Fruits", new Date(12, 12, 12, 12, 2012));
+            Console.WriteLine("Adding a pear will print true:");
+            Console.WriteLine(fridge.AddNewItem(pear));
+            Console.WriteLine("Adding another banana will print false:");
+            Console.WriteLine(fridge.AddNewItem(banana));
+            PrintItems(fridge.ListAll());
+>>>>>>> 2d325eb (fixes to stage 1)
         }
     }
 }
