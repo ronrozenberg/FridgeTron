@@ -84,7 +84,9 @@
 
             public void SetmaxItems(int num)
             {
+                if (num <= 0) throw new ArgumentException("maxItems must be greater than 0");
                 Item[] newarr = new Item[num];
+                bool placed = false;
                 if (num > this.maxItems)
                 {
                     for (int i = 0; i < this.arr.Length; i++)
@@ -97,6 +99,21 @@
                     for (int i = 0; i < num; i++)
                     {
                         newarr[i] = this.arr[i];
+                    }
+                    for (int i = num; i < this.arr.Length; i++)
+                    {
+                        if (this.arr[i] != null)
+                        {
+                            placed = false;
+                            for (int j = 0; j < newarr.Length; j++)
+                            {
+                                if (newarr[j] == null && !placed)
+                                {
+                                    newarr[j] = this.arr[i];
+                                    placed = true;
+                                }
+                            }
+                        }
                     }
                 }
                 this.maxItems = num;
@@ -206,10 +223,22 @@
                 return "Min: " + this.minutes + ", Hour: " + this.hours + ", Day: " + this.day + ", Month: " + this.month + ", Year: " + this.year;
             }
 
-            public void Setminutes(int minutes) { this.minutes = minutes; }
-            public void Setday(int day) { this.day = day; }
-            public void Sethours(int hours) { this.hours = hours; }
-            public void Setmonths(int month) { this.month = month; }
+            public void Setminutes(int minutes) {
+                if (minutes < 0 || minutes > 59) throw new ArgumentException("Minutes must be between 0 and 59");
+                this.minutes = minutes;
+            }
+            public void Setday(int day) {
+                if (day < 1 || day > 31) throw new ArgumentException("Day must be between 1 and 31");
+                this.day = day;
+            }
+            public void Sethours(int hours) {
+                if (hours < 0 || hours > 23) throw new ArgumentException("Hours must be between 0 and 23");
+                this.hours = hours; 
+            }
+            public void Setmonths(int month) {
+                if (month < 1 || month > 12) throw new ArgumentException("Month must be between 1 and 12");
+                this.month = month;
+            }
             public void Setyear(int year) { this.year = year; }
             public int GetMonths() { return this.year * 12 + this.month; }
             public int GetHourMinutes() { return this.hours * 60 + this.minutes; }
