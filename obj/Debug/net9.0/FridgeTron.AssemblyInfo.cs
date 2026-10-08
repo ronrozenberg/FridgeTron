@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FridgeTron")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e745a4de612302fd7bef03774053609bed2494a2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5b600b6acefdaafafb00aa8b31a07164efdbd412")]
 [assembly: System.Reflection.AssemblyProductAttribute("FridgeTron")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FridgeTron")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
