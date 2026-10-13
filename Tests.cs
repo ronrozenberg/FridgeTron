@@ -57,7 +57,7 @@ namespace FridgeTron.Tests
         public void AddItemToCompartment_ReturnsFalse_WhenCategoryNotAllowed()
         {
             var frozen = new Category("Frozen", 0, 0);
-            var comp = new Compartment("Freezer", 20, 0, new List<int> { frozen.Gettype() }, 0);
+            var comp = new Compartment("Freezer", 20, 0, new List<int> { GlobalIDs.GetCategoryType(frozen.Getname()) }, 0);
             var fridge = new Fridge(3, 0, 100, new List<Compartment> { comp });
             Assert.IsFalse(fridge.AddItemToCompartment(NewItem("Banana"), comp.GetID()));
         }
