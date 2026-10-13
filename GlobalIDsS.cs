@@ -13,6 +13,7 @@ namespace FridgeTron
         private static int CategoryID = 0;
         private static List<string> categories = new List<string>();
         private static List<Category> categories_obj = new List<Category>();
+        private static List<Item> thrownThisMonth = new List<Item>();
         public static int GetItemID()
         {
             ItemID++;
@@ -85,6 +86,27 @@ namespace FridgeTron
                 return true;
             } return false;
 
+        }
+
+        public static List<Item> GetThrownThisMonth()
+        {
+            List<Item> list = new List<Item>();
+            for (int i = thrownThisMonth.Count - 1; i >= 0; i--)
+            {
+                if (thrownThisMonth[i] == null || (Program.GetCurrDate().Month != thrownThisMonth[i].GetdateOfThrowing().Month))
+                    thrownThisMonth.RemoveAt(i);
+            }
+            for (int i = 0; i < thrownThisMonth.Count; i++)
+            {
+                if (thrownThisMonth[i] != null)
+                    list.Add(thrownThisMonth[i]);
+            }
+            return list;
+        }
+
+        public static List<Item> GetThrownThisMonthList()
+        {
+            return thrownThisMonth;
         }
     }
 }

@@ -13,7 +13,6 @@ namespace FridgeTron
         private int maxItems;
         private double currentTemp;
         private List<Item> itemList = new List<Item>();
-        private List<Item> thrownThisMonth = new List<Item>();
         private double maxSize;
         private List<Compartment> compartments = new List<Compartment>();
 
@@ -43,7 +42,7 @@ namespace FridgeTron
             if (item == null) return false;
             if (this.CountItems() >= this.maxItems) return false;
             if (this.SumSize() + item.GetSize() > this.maxSize) return false;
-            if (this.CheckDupe(item, this.itemList)) return false;
+            if (this.CheckDupe(item, ListAll())) return false;
             if (item.Getcategory().GetneededTemp() < this.currentTemp) return false;
             for (int i = 0; i < this.itemList.Count; i++)
             {
@@ -95,13 +94,35 @@ namespace FridgeTron
         {
             if (index < 0 || index >= this.itemList.Count) return false;
             if (this.itemList[index] == null) return false;
-            if (this.itemList[index].GetexDate() < GetCurrDate() && !CheckDupe(this.itemList[index], this.thrownThisMonth))
+            if (this.itemList[index].GetexDate() < GetCurrDate() && !CheckDupe(this.itemList[index], GlobalIDs.GetThrownThisMonth()))
             {
-                this.thrownThisMonth.Add(this.itemList[index]);
-                thrownThisMonth[thrownThisMonth.Count - 1].SetdateOfThrowing(GetCurrDate());
+                GlobalIDs.GetThrownThisMonthList().Add(this.itemList[index]);
+                GlobalIDs.GetThrownThisMonthList()[GlobalIDs.GetThrownThisMonthList().Count - 1].SetdateOfThrowing(GetCurrDate());
             }
-            itemList[index] = null;
+            this.itemList.RemoveAt(index);
             return true;
+        }
+        
+        public bool GlobalRemove(Item item)
+        {
+            if (item == null) return false;
+            for (int i = 0; i < this.compartments.Count; i++)
+            {
+                if (compartments[i] != null && compartments[i].GetItems().Contains(item))
+                {
+                    compartments[i].RemoveItem(item);
+                    return true;
+                }
+            }
+            for (int i = 0; i < this.itemList.Count; i++)
+            {
+                if (itemList[i] != null && itemList[i] == item)
+                {
+                    this.itemList.RemoveAt(i);
+                    return true;
+                }
+            }
+            return false;
         }
 
         public bool RemoveItem(Item item)
@@ -111,12 +132,12 @@ namespace FridgeTron
             {
                 if (this.itemList[i] != null && this.itemList[i] == item)
                 {
-                    if (item.GetexDate() < GetCurrDate() && !CheckDupe(item, this.thrownThisMonth))
+                    if (item.GetexDate() < GetCurrDate() && !CheckDupe(item, GlobalIDs.GetThrownThisMonthList()))
                     {
-                        this.thrownThisMonth.Add(item);
-                        thrownThisMonth[thrownThisMonth.Count - 1].SetdateOfThrowing(GetCurrDate());
+                        GlobalIDs.GetThrownThisMonthList().Add(item);
+                        GlobalIDs.GetThrownThisMonthList()[GlobalIDs.GetThrownThisMonthList().Count - 1].SetdateOfThrowing(GetCurrDate());
                     }
-                    itemList[i] = null;
+                    this.itemList.RemoveAt(i);
                     return true;
                 }
             }
@@ -126,7 +147,7 @@ namespace FridgeTron
         public bool RemoveItem(string item)
         {
             if (item == null) return false;
-            List<Item> foundItems = this.Find(i => i.Getname() == item);
+            List<Item> foundItems = this.Find(i => i.Getname() == item, this.ListAll());
             int smallestIndex = 0;
             if (foundItems.Count == 0) return false;
             if (foundItems.Count == 1)
@@ -154,7 +175,16 @@ namespace FridgeTron
         public List<Item> ListAll()
         {
             List<Item> result = new List<Item>();
-
+            for (int i = 0; i < compartments.Count; i++)
+            {
+                if (compartments[i] != null)
+                {
+                    for (int j = 0; j < compartments[i].GetItems().Count; j++)
+                    {
+                        if (compartments[i].GetItems()[j] != null) result.Add(compartments[i].GetItems()[j]);
+                    }
+                }
+            }
             for (int i = 0; i < this.itemList.Count; i++)
             {
                 if (this.itemList[i] != null)
@@ -166,14 +196,14 @@ namespace FridgeTron
             return result;
         }
 
-        public List<Item> Find(Func<Item, bool> condition)
+        public List<Item> Find(Func<Item, bool> condition, List<Item> itemList)
         {
             List<Item> foundItems = new List<Item>();
-            for (int i = 0; i < this.itemList.Count; i++)
+            for (int i = 0; i < itemList.Count; i++)
             {
-                if (this.itemList[i] != null && condition(this.itemList[i]))
+                if (itemList[i] != null && condition(itemList[i]))
                 {
-                    foundItems.Add(this.itemList[i]);
+                    foundItems.Add(itemList[i]);
                 }
             }
             return foundItems;
@@ -203,12 +233,12 @@ namespace FridgeTron
             {
                 if (this.itemList[i] != null && condition(this.itemList[i]))
                 {
-                    if (this.itemList[i].GetexDate() < GetCurrDate() && !CheckDupe(this.itemList[i], this.thrownThisMonth))
+                    if (this.itemList[i].GetexDate() < GetCurrDate() && !CheckDupe(this.itemList[i], GlobalIDs.GetThrownThisMonth()))
                     {
-                        this.thrownThisMonth.Add(this.itemList[i]);
-                        thrownThisMonth[thrownThisMonth.Count - 1].SetdateOfThrowing(GetCurrDate());
+                        GlobalIDs.GetThrownThisMonthList().Add(this.itemList[i]);
+                        GlobalIDs.GetThrownThisMonthList()[GlobalIDs.GetThrownThisMonthList().Count - 1].SetdateOfThrowing(GetCurrDate());
                     }
-                    this.itemList[i] = null;
+                    this.itemList.RemoveAt(i);
                 }
             }
         }
@@ -238,12 +268,37 @@ namespace FridgeTron
         public bool AddItemToCompartment(Item item, int id)
         {
             if (item == null) throw new ArgumentException("item must be set");
-            if (id == null) throw new ArgumentException("compartment must be set");
+            if (id <= 0) throw new ArgumentException("compartment must be positive");
             for (int i = 0; i < this.compartments.Count; i++)
             {
                 if (this.compartments[i] != null && this.compartments[i].GetID() == id)
                 {
+                    if (compartments[i].CountItems() >= compartments[i].GetmaxItems()) return false;
+                    if (compartments[i].SumSize() + item.GetSize() > compartments[i].GetmaxSize()) return false;
+                    if (this.CheckDupe(item, ListAll())) return false;
+                    if (item.Getcategory().GetneededTemp() < compartments[i].GetcurrentTemp()) return false;
                     if (compartments[i].AddItem(item)) return true;
+                }
+            }
+            return false;
+        }
+
+        public bool MoveItemToCompartment(Item item, int origin, int destination)
+        {
+            if (item == null) throw new ArgumentException("item must be set");
+            if (origin <= 0 || destination <= 0) throw new ArgumentException("compartment must be set");
+            for (int i = 0; i < this.compartments.Count; i++)
+            {
+                if (this.compartments[i] != null && this.compartments[i].GetID() == origin && compartments[i].GetItems().Contains(item))
+                {
+                    for(int j = 0; i<compartments.Count; j++)
+                    {
+                        if (this.compartments[j] != null && this.compartments[j].GetID() == destination && !compartments[j].GetItems().Contains(item))
+                        {
+                            compartments[j].AddItem(item);
+                            compartments[i].RemoveItem(item);
+                        }
+                    }
                 }
             }
             return false;
@@ -256,6 +311,7 @@ namespace FridgeTron
         public void SetmaxSize(double num)
         {
             if (num <= 0) throw new ArgumentException("maxSize must be greater than 0");
+            if (num < this.SumSize()) throw new ArgumentException("maxSize must be greater than current size");
             this.maxSize = num;
         }
 
@@ -282,22 +338,6 @@ namespace FridgeTron
         public double GetmaxSize()
         {
             return this.maxSize;
-        }
-
-        public List<Item> GetThrownThisMonth()
-        {
-            List<Item> list = new List<Item>();
-            for (int i = this.thrownThisMonth.Count - 1; i >= 0; i--)
-            {
-                if (this.thrownThisMonth[i] == null || (GetCurrDate().Month != this.thrownThisMonth[i].GetdateOfThrowing().Month))
-                    this.thrownThisMonth.RemoveAt(i);
-            }
-            for (int i = 0; i < this.thrownThisMonth.Count; i++)
-            {
-                if (this.thrownThisMonth[i] != null)
-                    list.Add(this.thrownThisMonth[i]);
-            }
-            return list;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace FridgeTron
             Console.WriteLine("All:");
             PrintItems(fridge.ListAll());
             Console.WriteLine("Bad:");
-            List<Item> badItems = fridge.Find(item => item.GetexDate() < DateTime.Now);
+            List<Item> badItems = fridge.Find(item => item.GetexDate() < DateTime.Now, fridge.ListAll());
             PrintItems(badItems);
             Console.WriteLine("Adding another banana will print false:");
             Console.WriteLine(fridge.AddNewItem(banana));
@@ -85,7 +85,7 @@ namespace FridgeTron
             //level 2 part 2
             Category icy = new Category("Icy", 0, 0);
             List<Compartment> compartments = new List<Compartment>();
-            compartments.Add(new Compartment("Freezer", 20, 0, new List<int> { 3 }, 0));
+            compartments.Add(new Compartment("Freezer", 20, 0, new List<int> { 3 }, 0, 3));
             Fridge freezer = new Fridge(3, -18, 100, compartments);
             Item ice = new Item("Ice", icy, new DateTime(2027, 12, 12, 12, 12, 0), 5);
             Console.WriteLine("Adding ice to freezer will print true:");
@@ -117,7 +117,7 @@ namespace FridgeTron
             PrintItems(fridge3.ListAll());
             Console.WriteLine("Removed This Month:");
             fridge3.RemoveBy(item => item.GetexDate() < DateTime.Now);
-            PrintItems(fridge3.GetThrownThisMonth());
+            PrintItems(GlobalIDs.GetThrownThisMonth());
             Console.WriteLine("All categories in program:");
             PrintList(GlobalIDs.Getcategories());
         }
