@@ -15,6 +15,8 @@ namespace FridgeTron
         private double Size;
         private int id;
         private DateTime dateOfThrowing;
+        private DateTime dateOfFreezing;
+        private string stage;
 
         public Item(string name, string category, int exdays, double temp, DateTime exDate, double Size)
         {
@@ -26,6 +28,8 @@ namespace FridgeTron
             this.exDate = exDate;
             this.Size = Size;
             this.id = GlobalIDs.GetItemID();
+            if (temp > 0) this.stage = "original";
+            else this.stage = "frozen";
         }
 
         public Item(string name, Category category, DateTime exDate, double Size)
@@ -37,6 +41,8 @@ namespace FridgeTron
             this.exDate = exDate;
             this.Size = Size;
             this.id = GlobalIDs.GetItemID();
+            if (category.GetneededTemp() > 0) this.stage = "original";
+            else this.stage = "frozen";
         }
 
         public override string ToString()
@@ -106,6 +112,23 @@ namespace FridgeTron
         public double GetSize()
         {
             return this.Size;
+        }
+
+        public string GetStage()
+        {
+            return this.stage;
+        }
+
+        public void SetStage(string stage)
+        {
+            if (!stage.Equals("original") && !stage.Equals("frozen") && !stage.Equals("thawed")) throw new ArgumentException("illegal stage");
+            if(stage.Equals("frozen")) this.dateOfFreezing = DateTime.Now;
+            if (stage.Equals("thawed"))
+            {
+                if (this.exDate.Subtract(this.dateOfFreezing).Days >= this.category.Getexdays()) this.exDate = DateTime.Now.AddDays(this.category.Getexdays());
+                else this.exDate = DateTime.Now.Add(this.exDate.Subtract(this.dateOfFreezing));
+            }
+            this.stage = stage;
         }
 
         public DateTime GetdateOfThrowing()

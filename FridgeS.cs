@@ -287,21 +287,27 @@ namespace FridgeTron
         {
             if (item == null) throw new ArgumentException("item must be set");
             if (origin <= 0 || destination <= 0) throw new ArgumentException("compartment must be set");
+
+            Compartment from = null;
+            Compartment to = null;
             for (int i = 0; i < this.compartments.Count; i++)
             {
-                if (this.compartments[i] != null && this.compartments[i].GetID() == origin && compartments[i].GetItems().Contains(item))
+                if (this.compartments[i] != null)
                 {
-                    for(int j = 0; i<compartments.Count; j++)
-                    {
-                        if (this.compartments[j] != null && this.compartments[j].GetID() == destination && !compartments[j].GetItems().Contains(item))
-                        {
-                            compartments[j].AddItem(item);
-                            compartments[i].RemoveItem(item);
-                        }
-                    }
+                    if (this.compartments[i].GetID() == origin) from = this.compartments[i];
+                    if (this.compartments[i].GetID() == destination) to = this.compartments[i];
                 }
             }
-            return false;
+            if (from == null || to == null) return false;
+            if (!from.GetItems().Contains(item)) return false;
+            if (to.GetItems().Contains(item)) return false;
+            if (to.CountItems() >= to.GetmaxItems()) return false;
+            if (to.SumSize() + item.GetSize() > to.GetmaxSize()) return false;
+            if (item.Getcategory().GetneededTemp() < to.GetcurrentTemp()) return false;
+            if (item.GetStage().Equals("thawed") && to.GetcurrentTemp() <= 0) return false;
+            if (!to.AddItem(item)) return false;
+            from.GetItems().Remove(item);
+            return true;
         }
         public void Setcompartments(List<Compartment> compartments)
         {

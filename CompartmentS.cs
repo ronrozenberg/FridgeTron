@@ -101,9 +101,12 @@ namespace FridgeTron
         {
             if (item == null) throw new ArgumentException("item must be set");
             if (!this.allowedCategories.Contains(GlobalIDs.GetCategoryType(item.Getcategory().Getname()))) return false;
-            if (item.Getcategory().GetneededTemp() > this.currentTemp) return false;
+            if (item.Getcategory().GetneededTemp() < this.currentTemp) return false;
+            if (item.GetStage().Equals("thawed") && this.currentTemp <= 0) return false;
             if (this.SumSize() + item.GetSize() > this.size) throw new ArgumentException("compartment size exceeded");
             this.items.Add(item);
+            if (item.GetStage().Equals("original") && this.currentTemp <= 0) item.SetStage("frozen");
+            if (item.GetStage().Equals("frozen") && this.currentTemp > 0) item.SetStage("thawed");
             return true;
         }
 

@@ -15,10 +15,13 @@ namespace FridgeTron
 
         public static void PrintList(List<string> items)
         {
+            Console.Write("[ ");
             for (int i = 0; i < items.Count; i++)
             {
                 if (items[i] != null) Console.Write(items[i] + " ");
             }
+            Console.Write(" ]");
+            Console.WriteLine(" ");
         }
 
         public static DateTime GetCurrDate()
@@ -84,8 +87,10 @@ namespace FridgeTron
 
             //level 2 part 2
             Category icy = new Category("Icy", 0, 0);
+            Category meltable = new Category("Meltable", 2, 24);
             List<Compartment> compartments = new List<Compartment>();
-            compartments.Add(new Compartment("Freezer", 20, 0, new List<int> { 3 }, 0, 3));
+            compartments.Add(new Compartment("Freezer", 20, 0, new List<int> { GlobalIDs.GetCategoryType("Icy"), GlobalIDs.GetCategoryType("Meltable")}, 0, 3));
+            compartments.Add(new Compartment("Warmer", 20, 0, new List<int> { GlobalIDs.GetCategoryType("Meltable") }, 23, 3));
             Fridge freezer = new Fridge(3, -18, 100, compartments);
             Item ice = new Item("Ice", icy, new DateTime(2027, 12, 12, 12, 12, 0), 5);
             Console.WriteLine("Adding ice to freezer will print true:");
@@ -120,6 +125,15 @@ namespace FridgeTron
             PrintItems(GlobalIDs.GetThrownThisMonth());
             Console.WriteLine("All categories in program:");
             PrintList(GlobalIDs.Getcategories());
+
+            //level 3
+            Console.WriteLine("=======level 3======");
+            Item ice_cream = new Item("Ice cream", meltable, DateTime.Now.AddDays(3), 5);
+            Console.WriteLine(freezer.AddItemToCompartment(ice_cream, 2));
+            PrintItems(freezer.ListAll());
+            Console.WriteLine("stage:" + ice_cream.GetStage());
+            Console.WriteLine(freezer.MoveItemToCompartment(ice_cream, 2, 1));
+            PrintItems(freezer.ListAll());
         }
     }
 }
